@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
 * 
 */
-class vinculacion extends Model
+class Vinculacion extends Model
 {
 	//nombre de la tabla
 	protected $table = 'vinculacion';

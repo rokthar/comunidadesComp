@@ -1,12 +1,12 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\detalleActividad;
-use App\Models\comunidad;
-use App\Models\resultado;
-use App\Models\imagenes;
-use App\Models\actividades;
-use App\Models\estudiante;
-use App\Models\miembros;
+use App\Models\DetalleActividad;
+use App\Models\Comunidad;
+use App\Models\Resultado;
+use App\Models\Imagenes;
+use App\Models\Actividades;
+use App\Models\Estudiante;
+use App\Models\Miembros;
 
 
 use Illuminate\Http\Request;
@@ -71,15 +71,15 @@ class ResultadoController extends Controller{
     public function listarResultados(){
         global $estado, $datos; 
         self::iniciarObjetoJSon();
-        $listas = resultado::where("estado",1)->get();
+        $listas = Resultado::where("estado",1)->get();
         
         $data = array();
         foreach ($listas as $lista) {
             $lista_imagenes=null;
-            $detActividad = detalleActividad::where("id", $lista->fk_det_actividad)->first();
-            $actividad = actividades::where("id",$detActividad->fk_actividades)->first();
-            $comunidad = comunidad::where("id",$actividad->fk_comunidad)->first();
-            $imagenes = imagenes::where("fk_resultado",$lista->id)->get();
+            $detActividad = DetalleActividad::where("id", $lista->fk_det_actividad)->first();
+            $actividad = Actividades::where("id",$detActividad->fk_actividades)->first();
+            $comunidad = Comunidad::where("id",$actividad->fk_comunidad)->first();
+            $imagenes = Imagenes::where("fk_resultado",$lista->id)->get();
             foreach ($imagenes as $img) {
                 $lista_imagenes[] =[
                     "ruta_imagen"=>$img->ruta_imagen//transformas base64

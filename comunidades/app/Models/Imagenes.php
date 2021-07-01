@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
 * 
 */
-class imagenes extends Model
+class Imagenes extends Model
 {
 	//nombre de la tabla
 	protected $table = 'imagenes';
