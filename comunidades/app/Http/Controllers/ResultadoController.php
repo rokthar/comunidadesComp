@@ -18,11 +18,11 @@ class ResultadoController extends Controller{
     public function registrarResultado(Request $request, $external_det_actividad){
         $data = $request->json()->all();
         
-        $detActividad = detalleActividad::where("external_detact",$external_det_actividad)->first();
+        $detActividad = DetalleActividad::where("external_detact",$external_det_actividad)->first();
         
         if($detActividad){
             if($data["resumen_resultado"] != "" && $data["descripcion_resultado"] != "" && $data["fecha_fin"] != ""){
-                $resultado = new resultado();
+                $resultado = new Resultado();
                 $resultado->fk_det_actividad = $detActividad->id;
                 $resultado->resumen_resultado = $data["resumen_resultado"];
                 $resultado->descripcion_resultado = $data["descripcion_resultado"];
@@ -51,9 +51,9 @@ class ResultadoController extends Controller{
         $ruta= '../imagenes/resultados';
         $image_name = time().$file->getClientOriginalName();
             $file->move($ruta, $image_name);
-            $resultado = resultado::where("external_resultado",$external_resultado)->first();
+            $resultado = Resultado::where("external_resultado",$external_resultado)->first();
             if($resultado){
-                $imagenes = new imagenes();
+                $imagenes = new Imagenes();
                 $imagenes->fk_resultado = $resultado->id;
                 $imagenes->ruta_imagen = $image_name;
                 $imagenes->estado = 1;
@@ -104,18 +104,18 @@ class ResultadoController extends Controller{
     public function listarResultadosByComunidad($external_comunidad){
         global $estado, $datos; 
         self::iniciarObjetoJSon();
-        $comunidad = comunidad::where("external_comunidad",$external_comunidad)->first();
+        $comunidad = Comunidad::where("external_comunidad",$external_comunidad)->first();
         if($comunidad){
-            $actividad = actividades::where("estado",1)->where("fk_comunidad",$comunidad->id)->first();
+            $actividad = Actividades::where("estado",1)->where("fk_comunidad",$comunidad->id)->first();
             if($actividad){
-                $detActividad = detalleActividad::where("fk_actividades", $actividad->id)->first();
-                $listas = resultado::where("estado",1)->where("fk_det_actividad",$detActividad->id)->get();
+                $detActividad = DetalleActividad::where("fk_actividades", $actividad->id)->first();
+                $listas = Resultado::where("estado",1)->where("fk_det_actividad",$detActividad->id)->get();
                 if($listas){
                     $data = array();
                     foreach ($listas as $lista) {
                         $lista_imagenes=null;
             
-                        $imagenes = imagenes::where("fk_resultado",$lista->id)->get();
+                        $imagenes = Imagenes::where("fk_resultado",$lista->id)->get();
                         foreach ($imagenes as $img) {
                             //$lista_imagenes[]="";
                             $lista_imagenes[] =[
@@ -149,20 +149,20 @@ class ResultadoController extends Controller{
     public function listarResultadosByEstudiante($external_estudiante){
         global $estado, $datos; 
         self::iniciarObjetoJSon();
-        $estudiante = estudiante::where("external_es",$external_estudiante)->first();
+        $estudiante = Estudiante::where("external_es",$external_estudiante)->first();
         if($estudiante){
-            $miembro = miembros::where("fk_estudiante",$estudiante->id)->first();
+            $miembro = Miembros::where("fk_estudiante",$estudiante->id)->first();
             if($miembro){
-                $comunidad = comunidad::where("id",$miembro->fk_comunidad)->first();
-                $actividad = actividades::where("estado",1)->where("fk_comunidad",$comunidad->id)->first();
+                $comunidad = Comunidad::where("id",$miembro->fk_comunidad)->first();
+                $actividad = Actividades::where("estado",1)->where("fk_comunidad",$comunidad->id)->first();
                 if($actividad){
-                    $detActividad = detalleActividad::where("fk_actividades", $actividad->id)->first();
-                    $listas = resultado::where("estado",1)->where("fk_det_actividad",$detActividad->id)->get();
+                    $detActividad = DetalleActividad::where("fk_actividades", $actividad->id)->first();
+                    $listas = Resultado::where("estado",1)->where("fk_det_actividad",$detActividad->id)->get();
                     
                     $data = array();
                     foreach ($listas as $lista) {
                         $lista_imagenes=null;
-                        $imagenes = imagenes::where("fk_resultado",$lista->id)->get();
+                        $imagenes = Imagenes::where("fk_resultado",$lista->id)->get();
                         foreach ($imagenes as $img) {
                             $lista_imagenes[] =[
                                 "ruta_imagen"=>$img->ruta_imagen
@@ -195,13 +195,13 @@ class ResultadoController extends Controller{
         global $estado, $datos; 
         self::iniciarObjetoJSon();
 
-        $resultado = resultado::where("external_resultado",$external_resultado)->first();
+        $resultado = Resultado::where("external_resultado",$external_resultado)->first();
         if($resultado){
-            $detActividad = detalleActividad::where("id", $resultado->fk_det_actividad)->first();
-            $actividad = actividades::where("id",$detActividad->fk_actividades)->first();
-            $comunidad = comunidad::where("id",$actividad->fk_comunidad)->first();
+            $detActividad = DetalleActividad::where("id", $resultado->fk_det_actividad)->first();
+            $actividad = Actividades::where("id",$detActividad->fk_actividades)->first();
+            $comunidad = Comunidad::where("id",$actividad->fk_comunidad)->first();
             
-            $imagenes = imagenes::where("fk_resultado",$resultado->id)->get();
+            $imagenes = Imagenes::where("fk_resultado",$resultado->id)->get();
             $lista_imagenes=null;
                 foreach ($imagenes as $img) {
                     //$datadetpos[]="";

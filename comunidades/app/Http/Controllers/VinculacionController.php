@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\vinculacion;
-use App\Models\comunidad;
+use App\Models\Vinculacion;
+use App\Models\Comunidad;
 use App\Http\Controllers\MailController;
 
 use Illuminate\Http\Request;
@@ -9,19 +9,19 @@ use Illuminate\Http\Request;
 //estado 0 Inactivo | 1 Activado | 2 En espera
 class VinculacionController extends Controller{
     public function RegistrarVinculacion(Request $request, $ext_comunidad,$ext_comunidad_solic){
-        $enviar = new MailController();
+        // $enviar = new MailController();
 
         if ($request->json()){
             $data = $request->json()->all();
             
-            $comunidadSolicitante=comunidad::where("external_comunidad",$ext_comunidad)->first();
-            $comunidadSolicitada=comunidad::where("external_comunidad",$ext_comunidad_solic)->first();
+            $comunidadSolicitante=Comunidad::where("external_comunidad",$ext_comunidad)->first();
+            $comunidadSolicitada=Comunidad::where("external_comunidad",$ext_comunidad_solic)->first();
 
             if($comunidadSolicitante && $comunidadSolicitada){
                 if($data["descripcion"] == "" || $data["fecha_inicio"] == ""){
                     return response()->json(["mensaje"=>"Datos Faltantes", "siglas"=>"DF"],200);
                 }else{
-                    $vinculacion = new vinculacion();
+                    $vinculacion = new Vinculacion();
                     $vinculacion->fk_comunidad_solicitante = $comunidadSolicitante->id;
                     $vinculacion->fk_comunidad_solicitada = $comunidadSolicitada->id;
                     $vinculacion->descripcion = $data["descripcion"];
@@ -49,10 +49,10 @@ class VinculacionController extends Controller{
             $data = $request->json()->all();
             $enviar = new MailController();
 
-            $vinculacionObj = vinculacion::where("external_vinculacion",$external_vinculacion)->first();
+            $vinculacionObj = Vinculacion::where("external_vinculacion",$external_vinculacion)->first();
             
             if($vinculacionObj){
-                $comunidad=comunidad::where("id",$vinculacionObj->fk_comunidad_solicitada)->first();
+                $comunidad=Comunidad::where("id",$vinculacionObj->fk_comunidad_solicitada)->first();
                 $vinculacionObj->estado = 1;
                 $vinculacionObj->save();
                 // $enviar->enviarMail("Tutor","Solicitud de Vinculacion Aceptada","Su solicitud de vinculacion con la comunidad ".$comunidad->nombre_comunidad." ha sido aceptada.<br>".$data["comentario"]);
@@ -69,10 +69,10 @@ class VinculacionController extends Controller{
             $data = $request->json()->all();
             $enviar = new MailController();
             
-            $vinculacionObj = vinculacion::where("external_vinculacion",$external_vinculacion)->first();
+            $vinculacionObj = Vinculacion::where("external_vinculacion",$external_vinculacion)->first();
 
             if($vinculacionObj){
-                $comunidad=comunidad::where("id",$vinculacionObj->fk_comunidad_solicitada)->first();
+                $comunidad=Comunidad::where("id",$vinculacionObj->fk_comunidad_solicitada)->first();
                 $vinculacionObj->estado = 0;
                 $vinculacionObj->save();
                 // $enviar->enviarMail("Tutor","Solicitud de Vinculacion Rechazada","Su solicitud de vinculacion con la comunidad ".$comunidad->nombre_comunidad." ha sido rechazada <br>".$data["comentario"]);
@@ -90,13 +90,13 @@ class VinculacionController extends Controller{
         global $estado, $datos;
         self::iniciarObjetoJSon();
            
-            $comunidad=comunidad::where("external_comunidad",$external_comunidad)->where("estado",1)->first();
+            $comunidad=Comunidad::where("external_comunidad",$external_comunidad)->where("estado",1)->first();
             if($comunidad){
-                $vinculacionObj = vinculacion::where("fk_comunidad_solicitada",$comunidad->id)
+                $vinculacionObj = Vinculacion::where("fk_comunidad_solicitada",$comunidad->id)
                 ->where("estado",2)->get();
     
                 foreach ($vinculacionObj as $lista) {
-                    $comunidadSolicitante=comunidad::where("id",$lista->fk_comunidad_solicitante)->first();
+                    $comunidadSolicitante=Comunidad::where("id",$lista->fk_comunidad_solicitante)->first();
     
                     $datos['data'][] = [
                         "comunidad_solicitante" => $comunidadSolicitante->nombre_comunidad,

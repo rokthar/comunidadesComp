@@ -1,14 +1,14 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\comunidad;
-use App\Models\docente;
-use App\Models\miembros;
-use App\Models\estudiante;
-use App\Models\actividades;
-use App\Models\detalleActividad;
-use App\Models\resultado;
-use App\Models\vinculacion;
-use App\Models\usuario;
+use App\Models\Comunidad;
+use App\Models\Docente;
+use App\Models\Miembros;
+use App\Models\Estudiante;
+use App\Models\Actividades;
+use App\Models\DetalleActividad;
+use App\Models\Resultado;
+use App\Models\Vinculacion;
+use App\Models\Usuario;
 use App\Http\Controllers\MailController;
 
 use Illuminate\Http\Request;
@@ -19,16 +19,16 @@ class ComunidadController extends Controller{
 
     public function RegistrarComuidad(Request $request, $external_docente){
             $enviar = new MailController();
-            $docenteS = docente::where("tipoDocente","3")->first();
-            $secretaria = usuario::where("id",$docenteS->fk_usuario)->first();
+            $docenteS = Docente::where("tipoDocente","3")->first();
+            $secretaria = Usuario::where("id",$docenteS->fk_usuario)->first();
             if ($request->json()){
                 $data = $request->json()->all();
 
-                $docenteObj = docente::where("external_do", $external_docente)->first();
-                $docente = usuario::where("id",$docenteObj->fk_usuario)->first();
+                $docenteObj = Docente::where("external_do", $external_docente)->first();
+                $docente = Usuario::where("id",$docenteObj->fk_usuario)->first();
                 if($docenteObj){
                     
-                    $comunidad = new comunidad();
+                    $comunidad = new Comunidad();
                     $comunidad->nombre_comunidad = $data["nombre_comunidad"];
                     $comunidad->tutor = $docenteObj->id;
                     $comunidad->descripcion = $data["descripcion"];
@@ -58,7 +58,7 @@ class ComunidadController extends Controller{
         $ruta= '../imagenes/comunidad';
         $image_name = time().$file->getClientOriginalName();
         $file->move($ruta, $image_name);
-        $comunidades = comunidad::where("external_comunidad",$external_comunidad)->first();
+        $comunidades = Comunidad::where("external_comunidad",$external_comunidad)->first();
         if($comunidades){
             $comunidades->ruta_logo = $image_name;
             $comunidades->save();
@@ -71,11 +71,11 @@ class ComunidadController extends Controller{
 
     public function ActivarComunidad ($external_comunidad){
         $enviar = new MailController();
-        $comunidadObj = comunidad::where("external_comunidad", $external_comunidad)->first();
+        $comunidadObj = Comunidad::where("external_comunidad", $external_comunidad)->first();
         if($comunidadObj){
-            $docenteObj = docente::where("id", $comunidadObj->tutor)->first();
-            $usuario = usuario::where("id",$docenteObj->fk_usuario)->first();
-            $comunidad = comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
+            $docenteObj = Docente::where("id", $comunidadObj->tutor)->first();
+            $usuario = Usuario::where("id",$docenteObj->fk_usuario)->first();
+            $comunidad = Comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
             $comunidad->estado = 1;
             $comunidad->save();
             //tipoDocente: 1 docente | 2 gestor | 3 secretaria | 4 Decano | 5 Tutor
@@ -93,11 +93,11 @@ class ComunidadController extends Controller{
         if ($request->json()){
             $data = $request->json()->all();
             $enviar = new MailController();
-            $comunidadObj = comunidad::where("external_comunidad", $external_comunidad)->first();
+            $comunidadObj = Comunidad::where("external_comunidad", $external_comunidad)->first();
             if($comunidadObj){
-                $docenteObj = docente::where("id", $comunidadObj->tutor)->first();
-                $usuario = usuario::where("id",$docenteObj->fk_usuario)->first();
-                $comunidad = comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
+                $docenteObj = Docente::where("id", $comunidadObj->tutor)->first();
+                $usuario = Usuario::where("id",$docenteObj->fk_usuario)->first();
+                $comunidad = Comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $comunidad->estado = 0;
                 $comunidad->save();
 
@@ -115,15 +115,15 @@ class ComunidadController extends Controller{
     }
 
     public function RevisionInformacion (Request $request,$external_comunidad){
-        $docenteG = docente::where("tipoDocente","2")->first();
-        $gestor = usuario::where("id",$docenteG->fk_usuario)->first();
+        $docenteG = Docente::where("tipoDocente","2")->first();
+        $gestor = Usuario::where("id",$docenteG->fk_usuario)->first();
 
         if ($request->json()){
             $data = $request->json()->all();
             $enviar = new MailController();
-            $comunidadObj = comunidad::where("external_comunidad", $external_comunidad)->first();
+            $comunidadObj = Comunidad::where("external_comunidad", $external_comunidad)->first();
             if($comunidadObj){
-                $comunidad = comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
+                $comunidad = Comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $comunidad->estado = 3;
                 $comunidad->save();
                 // $enviar->enviarMail("Gestor/a ".$docenteG->nombres." ".$docenteG->apellidos,"Solicitud de Comunidad","La solicitud de la comunidad ".$comunidadObj["nombre_comunidad"]." ha sido verificada por la Secretaria <br>".$data["comentario"], $gestor->correo);
@@ -136,14 +136,14 @@ class ComunidadController extends Controller{
     }
 
     public function RevisionGestor (Request $request,$external_comunidad){
-        $decano = docente::where("tipoDocente","4")->first();
-        $usuario = usuario::where("id",$decano->fk_usuario)->first();
+        $decano = Docente::where("tipoDocente","4")->first();
+        $usuario = Usuario::where("id",$decano->fk_usuario)->first();
         if ($request->json()){
             $data = $request->json()->all();
             $enviar = new MailController();
-            $comunidadObj = comunidad::where("external_comunidad", $external_comunidad)->first();
+            $comunidadObj = Comunidad::where("external_comunidad", $external_comunidad)->first();
             if($comunidadObj){
-                $comunidad = comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
+                $comunidad = Comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $comunidad->estado = 2;
                 $comunidad->save();
                 // $enviar->enviarMail("Decano/a ".$decano->nombres." ".$decano->apellidos,"Solicitud de Comunidad","La solicitud de la comunidad ".$comunidadObj["nombre_comunidad"]." ha sido validada por el Gestor de la Carrera <br> ".$data["comentario"], $usuario->correo);
@@ -159,7 +159,7 @@ class ComunidadController extends Controller{
         if ($request->json()){
             $data = $request->json()->all();
 
-            $comunidad = comunidad::where("external_comunidad", $external_comunidad)->first();
+            $comunidad = Comunidad::where("external_comunidad", $external_comunidad)->first();
             if($comunidad){
                 $comunidad->nombre_comunidad = $data["nombre_comunidad"];
                 $comunidad->descripcion = $data["descripcion"];
@@ -179,11 +179,11 @@ class ComunidadController extends Controller{
     public function ListarComunidadesActivadas (){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $listas = comunidad::where("estado",1)->get();
+        $listas = Comunidad::where("estado",1)->get();
         
         $data = array();
         foreach ($listas as $lista) {
-            $tutor = docente::where("id", $lista->tutor)->first();
+            $tutor = Docente::where("id", $lista->tutor)->first();
 
             $datos['data'][] = [
                 "nombres" => $lista->nombre_comunidad,
@@ -201,11 +201,11 @@ class ComunidadController extends Controller{
     public function ListarComunidadesVinculacion ($external_comunidad){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $listas = comunidad::where("estado",1)->get();
+        $listas = Comunidad::where("estado",1)->get();
         
         $data = array();
         foreach ($listas as $lista) {
-            $tutor = docente::where("id", $lista->tutor)->first();
+            $tutor = Docente::where("id", $lista->tutor)->first();
             if($lista->external_comunidad == $external_comunidad){
             }else{
                 $datos['data'][] = [
@@ -227,7 +227,7 @@ class ComunidadController extends Controller{
     public function ListarComunidadesSecretaria(){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $listas = comunidad::where("estado",4)->get();
+        $listas = Comunidad::where("estado",4)->get();
         
         $data = array();
         foreach ($listas as $lista) {
@@ -250,11 +250,11 @@ class ComunidadController extends Controller{
     public function ListarComunidadesGestor(){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $listas = comunidad::where("estado",3)->get();
+        $listas = Comunidad::where("estado",3)->get();
         
         $data = array();
         foreach ($listas as $lista) {
-            $tutor = docente::where("id", $lista->tutor)->first();
+            $tutor = Docente::where("id", $lista->tutor)->first();
 
             $datos['data'][] = [
                 "nombres" => $lista->nombre_comunidad,
@@ -273,11 +273,11 @@ class ComunidadController extends Controller{
     public function ListarComunidadesDecano(){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $listas = comunidad::where("estado",2)->get();
+        $listas = Comunidad::where("estado",2)->get();
         
         $data = array();
         foreach ($listas as $lista) {
-            $tutor = docente::where("id", $lista->tutor)->first();
+            $tutor = Docente::where("id", $lista->tutor)->first();
 
             $datos['data'][] = [
                 "nombres" => $lista->nombre_comunidad,
@@ -296,9 +296,9 @@ class ComunidadController extends Controller{
     public function BuscarComunidad($external_docente){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $docente = docente::where("external_do",$external_docente)->first();
+        $docente = Docente::where("external_do",$external_docente)->first();
         if($docente){
-        $comunidad = comunidad::where("tutor",$docente->id)->first();
+        $comunidad = Comunidad::where("tutor",$docente->id)->first();
             if($comunidad){
                 $datos['data'] = [
                     "nombre_comunidad" => $comunidad->nombre_comunidad,
@@ -321,9 +321,9 @@ class ComunidadController extends Controller{
     public function BuscarComunidadExternal($external_comunidad){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $comunidad = comunidad::where("external_comunidad",$external_comunidad)->first();
+        $comunidad = Comunidad::where("external_comunidad",$external_comunidad)->first();
         if($comunidad){
-            $docente = docente::where("id",$comunidad->tutor)->first();
+            $docente = Docente::where("id",$comunidad->tutor)->first();
             $datos['data'] = [
                 "nombre_comunidad" => $comunidad->nombre_comunidad,
                 "external_comunidad"=>$comunidad->external_comunidad,
@@ -343,11 +343,11 @@ class ComunidadController extends Controller{
     public function BuscarComunidadByMiembro($external_estudiante){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $estudiante = estudiante::where("external_es",$external_estudiante)->first();
+        $estudiante = Estudiante::where("external_es",$external_estudiante)->first();
         if($estudiante){
-            $miembro = miembros::where("fk_estudiante",$estudiante->id)->first();
+            $miembro = Miembros::where("fk_estudiante",$estudiante->id)->first();
             if($miembro){
-                $comunidad = comunidad::where("id",$miembro->fk_comunidad)->first();
+                $comunidad = Comunidad::where("id",$miembro->fk_comunidad)->first();
                     $datos['data'] = [
                         "nombre_comunidad" => $comunidad->nombre_comunidad,
                         "external_comunidad"=>$comunidad->external_comunidad,
@@ -370,14 +370,14 @@ class ComunidadController extends Controller{
         $dataRes=null;
         $dataAct=null;
         $dataVinc=null;
-        $comunidad = comunidad::where("external_comunidad",$external_comunidad)->first();
+        $comunidad = Comunidad::where("external_comunidad",$external_comunidad)->first();
         if($comunidad){
-            $miembro = miembros::where("fk_comunidad",$comunidad->id)->get();
-            $listas = actividades::where("fk_comunidad",$comunidad->id)->get();
-            $vinculaciones = vinculacion::where("fk_comunidad_solicitada",$comunidad->id)->get();
+            $miembro = Miembros::where("fk_comunidad",$comunidad->id)->get();
+            $listas = Actividades::where("fk_comunidad",$comunidad->id)->get();
+            $vinculaciones = Vinculacion::where("fk_comunidad_solicitada",$comunidad->id)->get();
             foreach ($miembro as $item) {
                 $data=null;
-                $estudiante = estudiante::where("id",$item->fk_estudiante)->first();
+                $estudiante = Estudiante::where("id",$item->fk_estudiante)->first();
                 $data[] = [
                     "estudiante"=>$estudiante->nombres." ".$estudiante->apellidos,
                     "ciclo"=>$estudiante->ciclo,
@@ -385,7 +385,7 @@ class ComunidadController extends Controller{
                 ];
             }
             foreach($vinculaciones as $vinc){
-                $comunidad = comunidad::where("id",$vinc->fk_comunidad_solicitante)->first();
+                $comunidad = Comunidad::where("id",$vinc->fk_comunidad_solicitante)->first();
                 $dataVinc[]=[
                     "fecha_solicitud"=>$vinc->fecha_inicio,
                     "comunidad_solicitante"=>$comunidad->nombre_comunidad
@@ -393,14 +393,14 @@ class ComunidadController extends Controller{
             }
             foreach ($listas as $act) {
                 // $dataAct = null;
-                $actividades = detalleActividad::where("fk_actividades",$act->id)->get();
+                $actividades = DetalleActividad::where("fk_actividades",$act->id)->get();
                 foreach ($actividades as $item) {
                     $dataAct[] =[
                         "nombre_actividad"=>$item->nombre_actividad,
                         "descripcion_actividad"=>$item->descripcion_actividad,
                         "fecha_inicio"=>$item->fecha_inicio
                     ];
-                    $resultados = resultado::where("fk_det_actividad",$item->id)->get();
+                    $resultados = Resultado::where("fk_det_actividad",$item->id)->get();
                     foreach ($resultados as $res) {
                         if($resultados != null){
                             $dataRes[] = [
