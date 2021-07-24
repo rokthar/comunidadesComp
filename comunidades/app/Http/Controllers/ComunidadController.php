@@ -41,9 +41,8 @@ class ComunidadController extends Controller{
         
                     $comunidad->save();
                     
-                    // $enviar->enviarMail("Secretaria ".$secretaria->nombres." ".$secretaria->apellidos,"Solicitud para la creacion de una Comunidad","Ha sido enviada una nueva solicitud para la creacion de la comunidad ".$data["nombre_comunidad"], $docenteS->correo);
-                    // $enviar->enviarMail("Docente ".$docenteObj->nombres." ".$docenteObj->apellidos,"Solicitud para la creacion de una Comunidad","Su solicitud para la creacion de la comunidad ".$data["nombre_comunidad"]. " ha sido enviada correctamente
-                    // debe esperar un aproximado de 3-24 dias para su respuesta", $docente->correo);
+                    $enviar->enviarMail("Secretaria ".$docenteS->nombres." ".$docenteS->apellidos,"Solicitud para la creación de una Comunidad","Ha sido enviada una nueva solicitud para la creacion de la comunidad ".$data["nombre_comunidad"], $secretaria->correo);
+                    $enviar->enviarMail("Docente ".$docenteObj->nombres." ".$docenteObj->apellidos,"Solicitud para la creación de una Comunidad","Su solicitud para la creación de la comunidad ".$data["nombre_comunidad"]. " ha sido enviada correctamente debe esperar un aproximado de 3-24 dias para su respuesta", $docente->correo);
                     
                     return response()->json(["mensaje"=>"Operación Exitosa","external_comunidad"=>$external ,"siglas"=>"OE"],200);
                 }else{
@@ -81,7 +80,7 @@ class ComunidadController extends Controller{
             //tipoDocente: 1 docente | 2 gestor | 3 secretaria | 4 Decano | 5 Tutor
             $docenteObj->tipoDocente = 5;
             $docenteObj->save();
-            // $enviar->enviarMail("Docente ".$docenteObj->nombres." ".$docenteObj->apellidos,"Aprobacion de Solicitud","La comunidad ".$comunidadObj["nombre_comunidad"]." ha sido aprobada", $usuario->correo);
+            $enviar->enviarMail("Docente ".$docenteObj->nombres." ".$docenteObj->apellidos,"Aprobación de Solicitud","La comunidad ".$comunidadObj["nombre_comunidad"]." ha sido aprobada", $usuario->correo);
 
             return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
         }else{
@@ -103,7 +102,7 @@ class ComunidadController extends Controller{
 
                 $docenteObj->tipoDocente = 1;
                 $docenteObj->save();
-                $enviar->enviarMail("Tutor ".$docenteObj->nombres." ".$docenteObj->apellidos,"Aprobacion de Solicitud","La comunidad ".$comunidadObj["nombre_comunidad"]." ha sido rechazada. <br> ".$data["comentario"],$usuario->correo);
+                $enviar->enviarMail("Tutor ".$docenteObj->nombres." ".$docenteObj->apellidos,"Aprobación de Solicitud","La comunidad ".$comunidadObj["nombre_comunidad"]." ha sido rechazada. <br> ".$data["comentario"],$usuario->correo);
                 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -126,7 +125,7 @@ class ComunidadController extends Controller{
                 $comunidad = Comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $comunidad->estado = 3;
                 $comunidad->save();
-                // $enviar->enviarMail("Gestor/a ".$docenteG->nombres." ".$docenteG->apellidos,"Solicitud de Comunidad","La solicitud de la comunidad ".$comunidadObj["nombre_comunidad"]." ha sido verificada por la Secretaria <br>".$data["comentario"], $gestor->correo);
+                $enviar->enviarMail("Gestor/a ".$docenteG->nombres." ".$docenteG->apellidos,"Solicitud de Comunidad","La solicitud de la comunidad ".$comunidadObj["nombre_comunidad"]." ha sido verificada por la Secretaria <br>".$data["comentario"], $gestor->correo);
 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -146,7 +145,7 @@ class ComunidadController extends Controller{
                 $comunidad = Comunidad::where("id", $comunidadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $comunidad->estado = 2;
                 $comunidad->save();
-                // $enviar->enviarMail("Decano/a ".$decano->nombres." ".$decano->apellidos,"Solicitud de Comunidad","La solicitud de la comunidad ".$comunidadObj["nombre_comunidad"]." ha sido validada por el Gestor de la Carrera <br> ".$data["comentario"], $usuario->correo);
+                $enviar->enviarMail("Decano/a ".$decano->nombres." ".$decano->apellidos,"Solicitud de Comunidad","La solicitud de la comunidad ".$comunidadObj["nombre_comunidad"]." ha sido validada por el Gestor de la Carrera <br> ".$data["comentario"], $usuario->correo);
 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
