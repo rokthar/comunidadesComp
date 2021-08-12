@@ -1,6 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\Configuracion;
+use App\Models\configuracion;
 use Illuminate\Http\Request;
 require 'Utilidades/PHPMailer/vendor/autoload.php';
 
