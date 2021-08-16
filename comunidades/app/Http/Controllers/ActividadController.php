@@ -17,7 +17,7 @@ class ActividadController extends Controller{
         $gestor = Usuario::where("id",$docenteG->fk_usuario)->first();
             $enviar = new MailController();
 
-            $docente=docente::where("external_do",$external_docente)->first();
+            $docente=Docente::where("external_do",$external_docente)->first();
                 if($docente){
                     $comunidadObj=Comunidad::where("tutor",$docente->id)->first();
                 if($comunidadObj){
@@ -39,7 +39,6 @@ class ActividadController extends Controller{
     }
 
     public function RegistrarDetalleActividad(Request $request, $external_actividades){
-        $enviar = new MailController();
 
         if ($request->json()){
             $data = $request->json()->all();
@@ -103,7 +102,7 @@ class ActividadController extends Controller{
             $tutor = Docente::where("id", $comunidad->tutor)->first();
             $usuarioT = Usuario::where("id", $tutor->fk_usuario)->first();
             if($actividadObj){
-                $detalleactividadObj = DetalleActividad::where("fk_actividades", $actividadObj->id)->get();
+                $detalleactividadObj = detalleActividad::where("fk_actividades", $actividadObj->id)->get();
                 foreach ($detalleactividadObj as $lista) {
                     $lista->estado = 0;
                     $lista->save();    
@@ -130,7 +129,7 @@ class ActividadController extends Controller{
     public function ListarPlanificacionEspera (){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $listas = actividades::where("estado",3)->get();
+        $listas = Actividades::where("estado",3)->get();
 
         $data = array();
         foreach ($listas as $lista) {

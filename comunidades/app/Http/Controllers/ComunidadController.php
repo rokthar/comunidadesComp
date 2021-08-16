@@ -41,9 +41,8 @@ class ComunidadController extends Controller{
         
                     $comunidad->save();
                     
-                    $enviar->enviarMail("Secretaria ".$secretaria->nombres." ".$secretaria->apellidos,"Solicitud para la creación de una Comunidad","Ha sido enviada una nueva solicitud para la creacion de la comunidad ".$data["nombre_comunidad"], $secretaria->correo);
-                    $enviar->enviarMail("Docente ".$docenteObj->nombres." ".$docenteObj->apellidos,"Solicitud para la creación de una Comunidad","Su solicitud para la creacion de la comunidad ".$data["nombre_comunidad"]. " ha sido enviada correctamente
-                    debe esperar un aproximado de 3-24 dias para su respuesta", $docente->correo);
+                    $enviar->enviarMail("Secretaria ".$docenteS->nombres." ".$docenteS->apellidos,"Solicitud para la creación de una Comunidad","Ha sido enviada una nueva solicitud para la creacion de la comunidad ".$data["nombre_comunidad"], $secretaria->correo);
+                    $enviar->enviarMail("Docente ".$docenteObj->nombres." ".$docenteObj->apellidos,"Solicitud para la creación de una Comunidad","Su solicitud para la creación de la comunidad ".$data["nombre_comunidad"]. " ha sido enviada correctamente debe esperar un aproximado de 3-24 dias para su respuesta", $docente->correo);
                     
                     return response()->json(["mensaje"=>"Operación Exitosa","external_comunidad"=>$external ,"siglas"=>"OE"],200);
                 }else{
@@ -103,7 +102,7 @@ class ComunidadController extends Controller{
 
                 $docenteObj->tipoDocente = 1;
                 $docenteObj->save();
-                $enviar->enviarMail("Tutor ".$docenteObj->nombres." ".$docenteObj->apellidos,"Aprobacion de Solicitud","La comunidad ".$comunidadObj["nombre_comunidad"]." ha sido rechazada. <br> ".$data["comentario"],$usuario->correo);
+                $enviar->enviarMail("Tutor ".$docenteObj->nombres." ".$docenteObj->apellidos,"Aprobación de Solicitud","La comunidad ".$comunidadObj["nombre_comunidad"]." ha sido rechazada. <br> ".$data["comentario"],$usuario->correo);
                 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -231,7 +230,7 @@ class ComunidadController extends Controller{
         
         $data = array();
         foreach ($listas as $lista) {
-            $tutor = Docente::where("id", $lista->tutor)->first();
+            $tutor = docente::where("id", $lista->tutor)->first();
 
             $datos['data'][] = [
                 "nombres" => $lista->nombre_comunidad,

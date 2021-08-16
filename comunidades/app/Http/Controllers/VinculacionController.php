@@ -67,7 +67,7 @@ class VinculacionController extends Controller{
 
                 $vinculacionObj->estado = 1;
                 $vinculacionObj->save();
-                $enviar->enviarMail("Tutor ".$docente->nombres." ".$docente->apellidos,"Solicitud de Vinculación Aceptada","Su solicitud de vinculación con la comunidad ".$comunidad->nombre_comunidad." ha sido aceptada.<br>".$data["comentario"], $usuario->correo);
+                $enviar->enviarMail("Tutor ".$docente->nombres." ".$docente->apellidos,"Solicitud de Vinculación Aceptada","Su solicitud de vinculaci{on con la comunidad ".$comunidad->nombre_comunidad." ha sido aceptada.<br>".$data["comentario"], $usuario->correo);
 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
