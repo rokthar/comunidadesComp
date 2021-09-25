@@ -1,12 +1,12 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => 'dev-main',
-    'version' => 'dev-main',
+    'pretty_version' => '1.0.0+no-version-set',
+    'version' => '1.0.0.0',
     'aliases' => 
     array (
     ),
-    'reference' => '416a9a39c8c41572c6d00cf2e74bca514a96e12c',
+    'reference' => NULL,
     'name' => 'laravel/lumen',
   ),
   'versions' => 
@@ -349,12 +349,12 @@
     ),
     'laravel/lumen' => 
     array (
-      'pretty_version' => 'dev-main',
-      'version' => 'dev-main',
+      'pretty_version' => '1.0.0+no-version-set',
+      'version' => '1.0.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '416a9a39c8c41572c6d00cf2e74bca514a96e12c',
+      'reference' => NULL,
     ),
     'laravel/lumen-framework' => 
     array (
@@ -483,15 +483,6 @@
       array (
       ),
       'reference' => '6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0',
-    ),
-    'phpmailer/phpmailer' => 
-    array (
-      'pretty_version' => 'v6.5.0',
-      'version' => '6.5.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'a5b5c43e50b7fba655f793ad27303cd74c57363c',
     ),
     'phpoption/phpoption' => 
     array (

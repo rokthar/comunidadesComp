@@ -57,7 +57,7 @@ class UsuarioController extends Controller
                 }else{
                     $est = Estudiante::where("fk_usuario",$usuario->id)->first();
                     if($est == ""){
-                        $persona = new estudiante();
+                        $persona = new Estudiante();
                         $persona->nombres = $data["nombres"];
                         $persona->apellidos = $data["apellidos"];
                         $persona->ciclo = $data["ciclo"];
@@ -167,7 +167,7 @@ class UsuarioController extends Controller
             $docente = Docente::where("external_do",$external_docente)->first();
             
             if ($docente) {
-                $usuario = usuario::where("id", $docente->fk_usuario)->first();
+                $usuario = Usuario::where("id", $docente->fk_usuario)->first();
 
                 $usuario->correo = $data["correo"];
 
@@ -404,7 +404,7 @@ class UsuarioController extends Controller
                     $auxClave = random_int(2,5)."unl";
                     $usuario->clave = sha1($auxClave);
                     $usuario->save();
-                    $enviar->enviarMailClave("Usuario","Recuperacion de Contraseña","Su solicitud ha sido eviada correctamente <br> Pofavor usar la siguiente contraseña generada automaticamente <strong>".$auxClave."</strong>, recuerde cambiar su contraeña cuando ingrese al sistrema.", $usuario->correo);
+                    //$enviar->enviarMail("Usuario","Recuperacion de Contraseña","Su solicitud ha sido eviada correctamente <br> Pofavor usar la siguiente contraseña generada automaticamente <strong>".$auxClave."</strong>, recuerde cambiar su contraeña cuando ingrese al sistrema.", $usuario->correo);
                     return response()->json(["mensaje" => "Operación Exitosa", "siglas" => "OE"], 200);
                 }else{
                     return response()->json(["mensaje" => "El usuario no existe", "siglas" => "UNE"], 200);

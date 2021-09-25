@@ -41,8 +41,8 @@ class VinculacionController extends Controller{
     
                     $vinculacion->save();
     
-                    $enviar->enviarMail("Tutor ".$docenteSolicitante->nombres." ".$docenteSolicitante->apellidos,"Solicitud de Vinculación","Su solicitud de vinculación con la comunidad ".$comunidadSolicitada->nombre_comunidad." ha sido enviada correctamente, debera esperar un aproximado de 3-8 dias para su respuesta", $usuarioSolicitante->correo);
-                    $enviar->enviarMail("Tutor ".$docenteSolicitado->nombres." ".$docenteSolicitado->apellidos,"Solicitud de Vinculación","Ha sido enviada una nueva solicitud para vincularse con la comunidad ".$comunidadSolicitante->nombre_comunidad.", dispone de 3-8 dias para dar su respuesta", $usuarioSoliitado->correo);
+                    //$enviar->enviarMail("Tutor ".$docenteSolicitante->nombres." ".$docenteSolicitante->apellidos,"Solicitud de Vinculación","Su solicitud de vinculación con la comunidad ".$comunidadSolicitada->nombre_comunidad." ha sido enviada correctamente, debera esperar un aproximado de 3-8 dias para su respuesta", $usuarioSolicitante->correo);
+                    //$enviar->enviarMail("Tutor ".$docenteSolicitado->nombres." ".$docenteSolicitado->apellidos,"Solicitud de Vinculación","Ha sido enviada una nueva solicitud para vincularse con la comunidad ".$comunidadSolicitante->nombre_comunidad.", dispone de 3-8 dias para dar su respuesta", $usuarioSoliitado->correo);
                     return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE","external_vinculacion"=>$external],200);
                 
                 }
@@ -67,7 +67,7 @@ class VinculacionController extends Controller{
 
                 $vinculacionObj->estado = 1;
                 $vinculacionObj->save();
-                $enviar->enviarMail("Tutor ".$docente->nombres." ".$docente->apellidos,"Solicitud de Vinculación Aceptada","Su solicitud de vinculaci{on con la comunidad ".$comunidad->nombre_comunidad." ha sido aceptada.<br>".$data["comentario"], $usuario->correo);
+                //$enviar->enviarMail("Tutor ".$docente->nombres." ".$docente->apellidos,"Solicitud de Vinculación Aceptada","Su solicitud de vinculación con la comunidad ".$comunidad->nombre_comunidad." ha sido aceptada.<br>".$data["comentario"], $usuario->correo);
 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -90,7 +90,7 @@ class VinculacionController extends Controller{
 
                 $vinculacionObj->estado = 0;
                 $vinculacionObj->save();
-                $enviar->enviarMail("Tutor ".$docente->nombres." ".$docente->apellidos,"Solicitud de Vinculación Rechazada","Su solicitud de vinculación con la comunidad ".$comunidad->nombre_comunidad." ha sido rechazada <br>".$data["comentario"], $usuario->correo);
+                //$enviar->enviarMail("Tutor ".$docente->nombres." ".$docente->apellidos,"Solicitud de Vinculación Rechazada","Su solicitud de vinculación con la comunidad ".$comunidad->nombre_comunidad." ha sido rechazada <br>".$data["comentario"], $usuario->correo);
 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{

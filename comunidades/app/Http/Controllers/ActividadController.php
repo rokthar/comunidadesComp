@@ -17,7 +17,7 @@ class ActividadController extends Controller{
         $gestor = Usuario::where("id",$docenteG->fk_usuario)->first();
             $enviar = new MailController();
 
-            $docente=Docente::where("external_do",$external_docente)->first();
+            $docente=docente::where("external_do",$external_docente)->first();
                 if($docente){
                     $comunidadObj=Comunidad::where("tutor",$docente->id)->first();
                 if($comunidadObj){
@@ -27,7 +27,7 @@ class ActividadController extends Controller{
                     $external = "Act".Utilidades\UUID::v4();
                     $actividades->external_actividades = $external;
                     $actividades->save();
-                    $enviar->enviarMail($docenteG->nombres." ".$docenteG->apellidos." Gestor de la carrera","Planificación de Actividades","La Comunidad ".$comunidadObj->nombre_comunidad." ha envida su planificación de actividades, esta debera ser revisada en un perdiodo de 3-8 dias", $gestor->correo);
+                    //$enviar->enviarMail($docenteG->nombres." ".$docenteG->apellidos." Gestor de la carrera","Planificación de Actividades","La Comunidad ".$comunidadObj->nombre_comunidad." ha envida su planificación de actividades, esta debera ser revisada en un perdiodo de 3-8 dias", $gestor->correo);
 
                     return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE","external_actividades"=>$external],200);
                 }else{
@@ -39,6 +39,7 @@ class ActividadController extends Controller{
     }
 
     public function RegistrarDetalleActividad(Request $request, $external_actividades){
+        $enviar = new MailController();
 
         if ($request->json()){
             $data = $request->json()->all();
@@ -83,7 +84,7 @@ class ActividadController extends Controller{
                 $actividad = Actividades::where("id", $actividadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $actividad->estado = 2;
                 $actividad->save();
-                $enviar->enviarMail("Tutor ".$tutor->nombres." ".$tutor->apellidos,"Planificación de Actividades Aprobada","Su planificación de actividades ha sido aprobada por el Gestor de la Carrera <br>".$data["comentario"], $usuarioT->correo);
+                //$enviar->enviarMail("Tutor ".$tutor->nombres." ".$tutor->apellidos,"Planificación de Actividades Aprobada","Su planificación de actividades ha sido aprobada por el Gestor de la Carrera <br>".$data["comentario"], $usuarioT->correo);
                         
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -102,7 +103,7 @@ class ActividadController extends Controller{
             $tutor = Docente::where("id", $comunidad->tutor)->first();
             $usuarioT = Usuario::where("id", $tutor->fk_usuario)->first();
             if($actividadObj){
-                $detalleactividadObj = detalleActividad::where("fk_actividades", $actividadObj->id)->get();
+                $detalleactividadObj = DetalleActividad::where("fk_actividades", $actividadObj->id)->get();
                 foreach ($detalleactividadObj as $lista) {
                     $lista->estado = 0;
                     $lista->save();    
@@ -110,7 +111,7 @@ class ActividadController extends Controller{
                 $actividad = Actividades::where("id", $actividadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $actividad->estado = 0;
                 $actividad->save();
-                $enviar->enviarMail("Tutor ".$tutor->nombres." ". $tutor->apellidos,"Planificación de Actividades Rechazada","Su planificación de actividades ha sido rechazada por el Gestor de la Carrera, podra generar otra planificacion de actividades y volver a enviarla para su revision. <br>".$data["comentario"], $usuarioT->correo);
+                //$enviar->enviarMail("Tutor ".$tutor->nombres." ". $tutor->apellidos,"Planificación de Actividades Rechazada","Su planificación de actividades ha sido rechazada por el Gestor de la Carrera, podra generar otra planificacion de actividades y volver a enviarla para su revision. <br>".$data["comentario"], $usuarioT->correo);
                         
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -129,7 +130,7 @@ class ActividadController extends Controller{
     public function ListarPlanificacionEspera (){
         global $estado, $datos;
         self::iniciarObjetoJSon();
-        $listas = Actividades::where("estado",3)->get();
+        $listas = actividades::where("estado",3)->get();
 
         $data = array();
         foreach ($listas as $lista) {
@@ -190,26 +191,32 @@ class ActividadController extends Controller{
         self::iniciarObjetoJSon();
         $comunidad = Comunidad::where("external_comunidad",$external_comunidad)->first();
         if($comunidad){
-            $listas = Actividades::where("fk_comunidad",$comunidad->id)->get();
+            $listas = Actividades::where("fk_comunidad",$comunidad->id)->where("estado","!=",0)->get();
             if($listas != null){
                 $data = array();
                 foreach ($listas as $lista) {
                     $actividades = DetalleActividad::where("fk_actividades",$lista->id)->get();
-        
-                    foreach ($actividades as $act) {
-                        if($act->estado == 1){
-                            $estado = "Completada";
-                        }else if($act->estado == 2){
-                            $estado = "Por Completar";
+                    if($actividades != null){
+                        foreach ($actividades as $act) {
+                            if($act->estado == 1){
+                                $estado = "Completada";
+                            }else if($act->estado == 2){
+                                $estado = "Por Completar";
+                            }else{
+                                $estado = "En Revisión";
+                            }
+                            $datos['data'][] = [
+                                "nombre_actividad"=>$act->nombre_actividad,
+                                "descripcion_actividad"=>$act->descripcion_actividad,
+                                "fecha_inicio"=>$act->fecha_inicio,
+                                "external_det_actividad"=>$act->external_detact,
+                                "estado"=>$estado
+                            ];
                         }
-                        $datos['data'][] = [
-                            "nombre_actividad"=>$act->nombre_actividad,
-                            "descripcion_actividad"=>$act->descripcion_actividad,
-                            "fecha_inicio"=>$act->fecha_inicio,
-                            "external_det_actividad"=>$act->external_detact,
-                            "estado"=>$estado
-                        ];
+                    }else{
+                        self::estadoJson(200, false, 'La comunidad no tiene actividades');
                     }
+                    
                 }
                 self::estadoJson(200, true, '');
             }else{

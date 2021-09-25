@@ -7,8 +7,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "laravel/lumen-framework": "^8.0",
-        "nesbot/carbon": "^2.46",
-        "phpmailer/phpmailer": "^6.5"
+        "nesbot/carbon": "^2.46"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

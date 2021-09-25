@@ -171,6 +171,7 @@ class ResultadoController extends Controller{
                         $datos['data'][] = [
                             "actividad" => $detActividad->nombre_actividad,
                             "resumen_resultado"=>$lista->resumen_resultado,
+                            "comunidad"=>$comunidad->nombre_comunidad,
                             "descripcion_resultado"=>$lista->descripcion_resultado,
                             "fecha_inicio"=>$detActividad->fecha_inicio,
                             "fecha_fin"=>$lista->fecha_fin,
