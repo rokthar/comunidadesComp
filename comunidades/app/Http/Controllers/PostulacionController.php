@@ -30,8 +30,8 @@ class PostulacionController extends Controller{
                 $postulacion->external_postulacion = $external;
                 $postulacion->save();
                 
-                //$enviar->enviarMail("Tutor","Postulación","El estudiante ".$estudianteObj->nombres." ".$estudianteObj->apellidos." del ciclo ".$estudianteObj->ciclo." paralelo ".$estudianteObj->paralelo." ha enviado una postulación a la comunidad",$usuarioDo->correo);
-                //$enviar->enviarMail($estudianteObj->nombres." ".$estudianteObj->apellidos,"Postulación","Su postulacion a la comunidad ".$comunidadObj->nombre_comunidad." ha sido enviada correctamente, debera esperar un aproximado de 3-8 dias para su respuesta",$usuarioEst->correo);
+                $enviar->enviarMail("Tutor","Postulación","El estudiante ".$estudianteObj->nombres." ".$estudianteObj->apellidos." del ciclo ".$estudianteObj->ciclo." paralelo ".$estudianteObj->paralelo." ha enviado una postulación a la comunidad",$usuarioDo->correo);
+                $enviar->enviarMail($estudianteObj->nombres." ".$estudianteObj->apellidos,"Postulación","Su postulacion a la comunidad ".$comunidadObj->nombre_comunidad." ha sido enviada correctamente, debera esperar un aproximado de 3-8 dias para su respuesta",$usuarioEst->correo);
             
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE","external_postulacion"=>$external],200);
             }else{
@@ -86,7 +86,7 @@ class PostulacionController extends Controller{
                 $estudiante->estado = 2; //estado del estudiante en 2 indica que es miembro de comunidad
                 $estudiante->save();
 
-                //$enviar->enviarMail($estudiante->nombres." ".$estudiante->apellidos,"Postulación Aceptada","Su postulación ha sido aceptada. <br>".$data["comentario"],$usuarioEst->correo);
+                $enviar->enviarMail($estudiante->nombres." ".$estudiante->apellidos,"Postulación Aceptada","Su postulación ha sido aceptada. <br>".$data["comentario"],$usuarioEst->correo);
 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -116,7 +116,7 @@ class PostulacionController extends Controller{
                 $estudiante->estado = 1; //estado del estudiante en 1 indica que es un estudiante normal
                 $estudiante->save();
 
-                //$enviar->enviarMail($estudiante->nombres." ".$estudiante->apellidos,"Postulación Rechazada","Su postulacion ha sido rechazada <br>".$data["comentario"], $usuarioEst->correo);
+                $enviar->enviarMail($estudiante->nombres." ".$estudiante->apellidos,"Postulación Rechazada","Su postulacion ha sido rechazada <br>".$data["comentario"], $usuarioEst->correo);
 
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -143,7 +143,7 @@ class PostulacionController extends Controller{
                     $estudiante->estado=1;
                     $estudiante->save();
                     
-                    //$enviar->enviarMail($estudiante->nombres." ".$estudiante->apellidos,"Postulación Cancelada","Su postulación ha sido cancelada <br>", $usuarioEst->correo);
+                    $enviar->enviarMail($estudiante->nombres." ".$estudiante->apellidos,"Postulación Cancelada","Su postulación ha sido cancelada <br>", $usuarioEst->correo);
     
                     return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
                 }else{

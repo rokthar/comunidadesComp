@@ -24,17 +24,28 @@ class UsuarioController extends Controller
                 if($data["correo"] == "" || $data["clave"] == "" || $data["tipo"] == ""){
                     return response()->json(["mensaje" => "Datos Faltantes", "siglas" => "DF"], 200);
                 }else{
-                    $usuario = new Usuario();
-                    $usuario->correo = $data["correo"];
-                    $clave = sha1($data["clave"] . "unl.");
-                    $usuario->clave = $clave;
-                    $usuario->tipoUsuario = $data["tipo"];
-                    $usuario->estado = 1;
-                    $external_usuario = "UuA" . Utilidades\UUID::v4();
-                    $usuario->external_us = $external_usuario;
-
-                    $usuario->save();
-                    return response()->json(["mensaje" => "Operacion existosa", "siglas" => "OE","external_us"=>$external_usuario], 200);
+                    $correoV = strLen(trim($data["correo"]));
+                    $claveV = strLen(trim($data["clave"]));
+                    if($correoV == 0 || $claveV == 0){
+                        return response()->json(["mensaje" => "Campos vacios", "siglas" => "CV"], 200);
+                    }else{
+                        $validar_email = self::valdiaremail($data['correo']);
+                        if($validar_email){
+                            $usuario = new Usuario();
+                            $usuario->correo = $data["correo"];
+                            $clave = sha1($data["clave"] . "unl.");
+                            $usuario->clave = $clave;
+                            $usuario->tipoUsuario = $data["tipo"];
+                            $usuario->estado = 1;
+                            $external_usuario = "UuA" . Utilidades\UUID::v4();
+                            $usuario->external_us = $external_usuario;
+        
+                            $usuario->save();
+                            return response()->json(["mensaje" => "Operacion existosa", "siglas" => "OE","external_us"=>$external_usuario], 200);
+                        }else{
+                            return response()->json(["mensaje" => "El correo debe ser de la UNL", "siglas" => "CI"], 200);
+                        }
+                    }
                 }
             }else{
                 return response()->json(["mensaje" => "El usuario ya existe", "siglas" => "UE"], 200);
@@ -43,7 +54,17 @@ class UsuarioController extends Controller
             return response()->json(["mensaje" => "La data no tiene el formato deseado", "siglas" => "DNF"], 200);
         }
     }
-
+    //VALIDAR CORREO DE LA UNL
+    public function valdiaremail($email)
+    {
+        $email = trim($email);
+        $dominio = explode("@", $email);
+        if ($dominio[1] === 'unl.edu.ec') {
+            return true;
+        }else{
+            return false;
+        }
+    }
     //REGISTRO DE ESTUDIANTE
 
     public function RegistrarEstudiante(Request $request, $external_id){
@@ -57,16 +78,29 @@ class UsuarioController extends Controller
                 }else{
                     $est = Estudiante::where("fk_usuario",$usuario->id)->first();
                     if($est == ""){
-                        $persona = new Estudiante();
-                        $persona->nombres = $data["nombres"];
-                        $persona->apellidos = $data["apellidos"];
-                        $persona->ciclo = $data["ciclo"];
-                        $persona->paralelo = $data["paralelo"];
-                        $persona->estado = 1;
-                        $persona->fk_usuario = $usuario->id;
-                        $persona->external_es = "Es" . Utilidades\UUID::v4();
-                        $persona->save();
-                        return response()->json(["mensaje" => "Operacion existosa", "siglas" => "OE"], 200);
+                        $nombresV = strLen(trim($data["nombres"]));
+                        $apellidosV = strLen(trim($data["apellidos"]));
+                        $cicloV = strLen(trim($data["ciclo"]));
+                        $paraleloV = strLen(trim($data["paralelo"]));
+
+                        if($nombresV == 0 || $apellidosV == 0 || $cicloV == 0 || $paraleloV == 0){
+                            return response()->json(["mensaje" => "Campos vacios", "siglas" => "CV"], 200);
+                        }else{
+                            if($data["ciclo"] > 0 && $data["ciclo"] <= 10){
+                                $persona = new Estudiante();
+                                $persona->nombres = $data["nombres"];
+                                $persona->apellidos = $data["apellidos"];
+                                $persona->ciclo = $data["ciclo"];
+                                $persona->paralelo = $data["paralelo"];
+                                $persona->estado = 1;
+                                $persona->fk_usuario = $usuario->id;
+                                $persona->external_es = "Es" . Utilidades\UUID::v4();
+                                $persona->save();
+                                return response()->json(["mensaje" => "Operacion existosa", "siglas" => "OE"], 200);
+                            }else{
+                                return response()->json(["mensaje" => "Error al Registrar", "siglas" => "CS"], 200);
+                            }
+                        }
                     }else{
                         return response()->json(["mensaje" => "El estudiante ya esta registrado", "siglas" => "ER"], 200);
                     }
@@ -142,15 +176,21 @@ class UsuarioController extends Controller
                     if($doc){
                         return response()->json(["mensaje" => "El docente ya esta registrado", "siglas" => "DR"], 200);
                     }else{
-                        $docente = new Docente();
-                        $docente->nombres = $data["nombres"];
-                        $docente->apellidos = $data["apellidos"];
-                        $docente->tipoDocente = $data['tipo_docente'];
-                        $docente->estado = 1;
-                        $docente->fk_usuario = $usuario->id;
-                        $docente->external_do = "Doc" . Utilidades\UUID::v4();
-                        $docente->save();
-                        return response()->json(["mensaje" => "Operacion existosa", "siglas" => "OE"], 200);
+                        $nombresV = strLen(trim($data["nombres"]));
+                        $apellidosV = strLen(trim($data["apellidos"]));
+                        if($nombresV == 0 || $apellidosV == 0){
+                            return response()->json(["mensaje" => "Campos vacios", "siglas" => "CV"], 200);
+                        }else{
+                            $docente = new Docente();
+                            $docente->nombres = $data["nombres"];
+                            $docente->apellidos = $data["apellidos"];
+                            $docente->tipoDocente = $data['tipo_docente'];
+                            $docente->estado = 1;
+                            $docente->fk_usuario = $usuario->id;
+                            $docente->external_do = "Doc" . Utilidades\UUID::v4();
+                            $docente->save();
+                            return response()->json(["mensaje" => "Operacion existosa", "siglas" => "OE"], 200);
+                        }
                     }
                 }
             }else{
@@ -404,7 +444,7 @@ class UsuarioController extends Controller
                     $auxClave = random_int(2,5)."unl";
                     $usuario->clave = sha1($auxClave);
                     $usuario->save();
-                    //$enviar->enviarMail("Usuario","Recuperacion de Contraseña","Su solicitud ha sido eviada correctamente <br> Pofavor usar la siguiente contraseña generada automaticamente <strong>".$auxClave."</strong>, recuerde cambiar su contraeña cuando ingrese al sistrema.", $usuario->correo);
+                    $enviar->enviarMail("Usuario","Recuperacion de Contraseña","Su solicitud ha sido eviada correctamente <br> Pofavor usar la siguiente contraseña generada automaticamente <strong>".$auxClave."</strong>, recuerde cambiar su contraeña cuando ingrese al sistrema.", $usuario->correo);
                     return response()->json(["mensaje" => "Operación Exitosa", "siglas" => "OE"], 200);
                 }else{
                     return response()->json(["mensaje" => "El usuario no existe", "siglas" => "UNE"], 200);

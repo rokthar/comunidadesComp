@@ -27,7 +27,7 @@ class ActividadController extends Controller{
                     $external = "Act".Utilidades\UUID::v4();
                     $actividades->external_actividades = $external;
                     $actividades->save();
-                    //$enviar->enviarMail($docenteG->nombres." ".$docenteG->apellidos." Gestor de la carrera","Planificación de Actividades","La Comunidad ".$comunidadObj->nombre_comunidad." ha envida su planificación de actividades, esta debera ser revisada en un perdiodo de 3-8 dias", $gestor->correo);
+                    $enviar->enviarMail($docenteG->nombres." ".$docenteG->apellidos." Gestor de la carrera","Planificación de Actividades","La Comunidad ".$comunidadObj->nombre_comunidad." ha envida su planificación de actividades, esta debera ser revisada en un perdiodo de 3-8 dias", $gestor->correo);
 
                     return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE","external_actividades"=>$external],200);
                 }else{
@@ -84,7 +84,7 @@ class ActividadController extends Controller{
                 $actividad = Actividades::where("id", $actividadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $actividad->estado = 2;
                 $actividad->save();
-                //$enviar->enviarMail("Tutor ".$tutor->nombres." ".$tutor->apellidos,"Planificación de Actividades Aprobada","Su planificación de actividades ha sido aprobada por el Gestor de la Carrera <br>".$data["comentario"], $usuarioT->correo);
+                $enviar->enviarMail("Tutor ".$tutor->nombres." ".$tutor->apellidos,"Planificación de Actividades Aprobada","Su planificación de actividades ha sido aprobada por el Gestor de la Carrera <br>".$data["comentario"], $usuarioT->correo);
                         
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
@@ -111,7 +111,7 @@ class ActividadController extends Controller{
                 $actividad = Actividades::where("id", $actividadObj->id)->first(); //veo si el usuario tiene una persona y obtengo todo el reglon
                 $actividad->estado = 0;
                 $actividad->save();
-                //$enviar->enviarMail("Tutor ".$tutor->nombres." ". $tutor->apellidos,"Planificación de Actividades Rechazada","Su planificación de actividades ha sido rechazada por el Gestor de la Carrera, podra generar otra planificacion de actividades y volver a enviarla para su revision. <br>".$data["comentario"], $usuarioT->correo);
+                $enviar->enviarMail("Tutor ".$tutor->nombres." ". $tutor->apellidos,"Planificación de Actividades Rechazada","Su planificación de actividades ha sido rechazada por el Gestor de la Carrera, podra generar otra planificacion de actividades y volver a enviarla para su revision. <br>".$data["comentario"], $usuarioT->correo);
                         
                 return response()->json(["mensaje"=>"Operación Exitosa", "siglas"=>"OE"],200);
             }else{
